@@ -1,0 +1,1 @@
+Learning puppet basics, a configuration managment tools
