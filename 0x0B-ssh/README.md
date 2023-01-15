@@ -1,0 +1,1 @@
+Server confihuration using ssh
