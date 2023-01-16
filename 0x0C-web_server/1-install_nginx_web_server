@@ -6,8 +6,7 @@
 # 'Holberton School'.
 #
 
-apt update
-apt install -y nginx
-ufw allow 'Nginx HTTP'
-echo "Holberton School" > /var/www/html/index.html
+apt-get update
+apt-get install -y nginx
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
 service nginx restart
