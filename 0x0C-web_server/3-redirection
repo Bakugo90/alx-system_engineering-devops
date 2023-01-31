@@ -15,6 +15,6 @@ new_conf="server_name _;\n\trewrite ^/redirect_me/$ $link permanent;"
 apt update
 apt install -y nginx
 ufw allow 'Nginx HTTP'
-echo "Holberton School" > /var/www/html/index.html
+echo "Hello World!" > /var/www/html/index.html
 sed -i "s|server_name\ _;|$new_conf|" /etc/nginx/sites-available/default
 service nginx restart
