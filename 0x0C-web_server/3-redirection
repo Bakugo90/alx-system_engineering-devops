@@ -9,12 +9,14 @@
 # to redirect to another page with 301 HTTP Code
 #
 
-link="https://www.youtube.com/watch?v=QH2-TGUlwu4"
-new_conf="server_name _;\n\trewrite ^/redirect_me/$ $link permanent;"
-
-apt update
-apt install -y nginx
+#!/usr/bin/env bash
+#Configure your Nginx server so that /redirect_me is redirecting to another page.
+STR="Hello World!"
+RED="\n\tlocation /rediect_me {\n\t\treturn 301 https://youtube.com; \n\t}\n"
+FILE="/etc/nginx/states-available/default"
+apt-get -y update
+apt-get -y install ngnix
 ufw allow 'Nginx HTTP'
-echo "Holberton School" > /var/www/html/index.html
-sed -i "s|server_name\ _;|$new_conf|" /etc/nginx/sites-available/default
+echo "$STR" > /var/www/html/index.nginx-debian.html
+sed -i "37i\ $RED" "$FILE"
 service nginx restart
