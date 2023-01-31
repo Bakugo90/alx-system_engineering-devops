@@ -12,17 +12,22 @@
 # 'Ceci n'est pas une page'.
 #
 
-link="https://www.youtube.com/watch?v=QH2-TGUlwu4"
-new_conf="server_name _;\n\trewrite ^/redirect_me/$ $link permanent;"
-location_error="location = /404.html {\n\t\troot /var/www/html/;\n\t\tinternal;\n"
-error_directive="error_page 404 /404.html;\n\t$location_error"
-error_404="}\n\n\t$error_directive\t}"
+STR="Hello World!"
 
-apt update
-apt install -y nginx
+RED="\n\tlocation /redirect_me {\n\t\treturn 301 https://youtube.com;\n\t}\n"
+FILE="/etc/nginx/sites-available/default"
+
+ERR_FILE="/usr/share/nginx/html/404error.html"
+ERR_STR="Ceci n'est pas une page"
+ERR_DIR="\n\terror_page 404 /404error.html;\n\tlocation = /404error.html {\n\t\troot /usr/share/nginx/html;\n\t\tinternal;\n\t}\n"
+
+apt-get -y update
+apt-get -y install nginx
 ufw allow 'Nginx HTTP'
-echo "Holberton School" > /var/www/html/index.html
-echo "Ceci n'est pas une page" > /var/www/html/404.html
-sed -i "s|server_name\ _;|$new_conf|" /etc/nginx/sites-available/default
-sed -i "0,/}/ s|}|$error_404|" /etc/nginx/sites-available/default
+sudo echo "$STR" > /var/www/html/index.nginx-debian.html
+sed -i "37i\ $RED" "$FILE"
+
+echo "$ERR_STR" > "$ERR_FILE"
+sed -i "37i\ $ERR_DIR" "$FILE"
+
 service nginx restart
