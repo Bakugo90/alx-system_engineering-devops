@@ -27,3 +27,4 @@ if __name__ == "__main__":
         header = ["user_ID", "username", "completed", "task"]
         writer = DictWriter(f, fieldnames=header, quoting=QUOTE_ALL)
         writer.writerows(todo_list)
+        
