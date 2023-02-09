@@ -1,43 +1,29 @@
 #!/usr/bin/python3
-"""Export data from an API to CSV format.
+"""Using what you did in the task #0,
+    extend your Python script to export
+    data in the CSV format.
 """
-import csv
-import requests
+from csv import DictWriter, QUOTE_ALL
+from requests import get
 from sys import argv
 
-if __name__ == '__main__':
-    # Checks if the argument can be converted to a number
-    try:
-        emp_id = int(argv[1])
-    except ValueError:
-        exit()
 
-    # Main formatted names to API uris and filenames
-    api_url = 'https://jsonplaceholder.typicode.com'
-    user_uri = '{api}/users/{id}'.format(api=api_url, id=emp_id)
-    todo_uri = '{user_uri}/todos'.format(user_uri=user_uri)
-    filename = '{emp_id}.csv'.format(emp_id=emp_id)
+if __name__ == "__main__":
+    main_url = "https://jsonplaceholder.typicode.com"
+    todo_url = main_url + "/user/{}/todos".format(argv[1])
+    name_url = main_url + "/users/{}".format(argv[1])
+    todo_result = get(todo_url).json()
+    name_result = get(name_url).json()
 
-    # User Response
-    res = requests.get(user_uri).json()
-
-    # Username of the employee
-    username = res.get('username')
-
-    # User TODO Response
-    res = requests.get(todo_uri).json()
-
-    # Create the new file for the user to save the information
-    # Filename example: `{user_id}.csv`
-    with open(filename, 'w', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_ALL)
-
-        for elem in res:
-            # Completed or non-completed task
-            status = elem.get('completed')
-
-            # The task name
-            title = elem.get('title')
-
-            # Writing each result of API response in a row of a CSV file
-            writer.writerow([emp_id, username, status, title])
+    todo_list = []
+    for todo in todo_result:
+        todo_dict = {}
+        todo_dict.update({"user_ID": argv[1],
+                          "username": name_result.get("username"),
+                          "completed": todo.get("completed"),
+                          "task": todo.get("title")})
+        todo_list.append(todo_dict)
+    with open("{}.csv".format(argv[1]), 'w', newline='') as f:
+        header = ["user_ID", "username", "completed", "task"]
+        writer = DictWriter(f, fieldnames=header, quoting=QUOTE_ALL)
+        writer.writerows(todo_list)

@@ -1,43 +1,25 @@
 #!/usr/bin/python3
-"""Given an Employee ID, returns information
-about his/her TODO list progress.
+"""Write a Python script that, using this REST API,
+    for a given employee ID, returns information
+    about his/her TODO list progress.
 """
-import requests
+from requests import get
 from sys import argv
 
+
 if __name__ == '__main__':
-    try:
-        emp_id = int(argv[1])
-    except ValueError:
-        exit()
+    url = 'https://jsonplaceholder.typicode.com'
+    user_todo = url + "/user/{}/todos".format(argv[1])
+    username_id = url + "/users/{}".format(argv[1])
+    todo_result = get(user_todo).json()
+    name_result = get(username_id).json()
 
-    api_url = 'https://jsonplaceholder.typicode.com'
-    user_uri = '{api}/users/{id}'.format(api=api_url, id=emp_id)
-    todo_uri = '{user_uri}/todos'.format(user_uri=user_uri)
-
-    # User Response
-    res = requests.get(user_uri).json()
-
-    # Name of the employee
-    name = res.get('name')
-
-    # User TODO Response
-    res = requests.get(todo_uri).json()
-
-    # Total number of tasks, the sum of completed and non-completed tasks
-    total = len(res)
-
-    # Number of non-completed tasks
-    non_completed = sum([elem['completed'] is False for elem in res])
-
-    # Number of completed tasks
-    completed = total - non_completed
-
-    # Formatting the expected output
-    str = "Employee {emp_name} is done with tasks({completed}/{total}):"
-    print(str.format(emp_name=name, completed=completed, total=total))
-
-    # Printing completed tasks
-    for elem in res:
-        if elem.get('completed') is True:
-            print('\t', elem.get('title'))
+    todo_num = len(todo_result)
+    todo_complete = len([todo for todo in todo_result
+                         if todo.get("completed")])
+    name = name_result.get("name")
+    print("Employee {} is done with tasks({}/{}):"
+          .format(name, todo_complete, todo_num))
+    for todo in todo_result:
+        if (todo.get("completed")):
+            print("\t {}".format(todo.get("title")))
